@@ -1,0 +1,57 @@
+{
+  "AUTH_INVALID_CREDENTIALS": "Email or password is incorrect",
+  "AUTH_REQUIRED": "You are not signed in",
+  "AUTH_SESSION_EXPIRED": "Your session has expired. Please sign in again",
+  "AUTH_ACCOUNT_LOCKED": "Too many failed attempts. Try again in {{minutes}} minutes",
+  "AUTH_CURRENT_PASSWORD_INCORRECT": "Current password is incorrect",
+  "AUTH_PASSWORD_UNCHANGED": "New password must be different from the current one",
+  "SESSION_NOT_FOUND": "Session not found",
+
+  "CSRF_TOKEN_MISSING": "Missing security token. Refresh the page and try again",
+  "CSRF_TOKEN_INVALID": "Invalid security token. Refresh the page and try again",
+  "RATE_LIMITED": "Too many requests. Try again in {{minutes}} minutes",
+  "ORIGIN_NOT_ALLOWED": "Requests from this origin are not allowed",
+  "ROUTE_NOT_FOUND": "That page could not be found",
+  "BODY_INVALID_JSON": "The data sent was not valid",
+  "BODY_TOO_LARGE": "The data sent was too large",
+  "BODY_UNSUPPORTED_ENCODING": "That content encoding is not supported",
+  "BODY_TOO_DEEP": "The data structure is too deeply nested",
+  "BODY_TOO_MANY_FIELDS": "Too many fields were sent",
+
+  "VALIDATION_FAILED": "Some details are not right. Please fix the highlighted fields",
+  "INVALID_INPUT": "The data sent was not valid",
+
+  "DUPLICATE_RECORD": "A record with these details already exists",
+  "RECORD_NOT_FOUND": "That record could not be found",
+  "REFERENCE_NOT_FOUND": "A related record could not be found",
+  "VALUE_TOO_LONG": "That text is too long",
+  "FIELD_REQUIRED": "A required field was left empty",
+  "RECORD_IN_USE": "This record is used elsewhere and cannot be changed",
+
+  "PROPERTY_NOT_FOUND": "Property not found",
+  "PROPERTY_STATUS_UNCHANGED": "This property is already marked “{{status}}”",
+  "PROPERTY_STATUS_TRANSITION_INVALID": "Cannot move from “{{from}}” to “{{to}}”. Available now: {{allowed}}",
+  "PROPERTY_STATUS_TERMINAL": "A property marked “{{from}}” cannot change status",
+  "PROPERTY_ALREADY_CLOSED": "This deal is already closed",
+  "PROPERTY_REOPEN_REQUIRED": "This deal was marked lost. Reopen it before closing as sold",
+  "PROPERTY_COMMISSION_REQUIRES_CLOSE": "Commission can only be recorded on a closed deal",
+  "PROPERTY_NOT_DELETED": "This property has not been deleted",
+
+  "BUYER_NOT_FOUND": "Buyer not found",
+  "BUYER_NOT_DELETED": "This buyer has not been deleted",
+  "INQUIRY_NOT_FOUND": "That link could not be found",
+  "INQUIRY_DUPLICATE": "{{buyerName}} is already linked to this property",
+
+  "VIDEO_URL_EMPTY": "Please enter a video link",
+  "VIDEO_URL_MALFORMED": "That link is not valid. Paste the full address including https://",
+  "VIDEO_SCHEME_UNSUPPORTED": "Only https links can be used",
+  "VIDEO_HOST_UNSUPPORTED": "Only Facebook, TikTok and YouTube links can be added",
+  "VIDEO_ID_NOT_FOUND": "No video found in that {{provider}} link. Use the full link from the Share button",
+  "VIDEO_TIKTOK_SHORT_LINK": "Short TikTok links do not work. Open the video and copy the full link — like tiktok.com/@username/video/1234567890",
+
+  "INTERNAL": "Something went wrong. Please try again in a moment",
+
+  "OFFLINE": "You are offline. Check your internet connection",
+  "SERVER_UNREACHABLE": "Cannot reach the server",
+  "UNKNOWN": "Something went wrong"
+}

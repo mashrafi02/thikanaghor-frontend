@@ -1,0 +1,171 @@
+/**
+ * Design tokens — the single source of colour truth.
+ *
+ * Values are space-separated RGB channels, not hex, because that is what lets
+ * Tailwind's `<alpha-value>` work: `bg-accent/10` compiles to
+ * `rgb(var(--accent) / 0.1)`. With a hex value the opacity utilities silently
+ * produce nothing, which is the usual reason themed colours "don't support opacity".
+ *
+ * Every value here is from DESIGN.md §4 and has been contrast-verified against the
+ * surface it sits on. Do not add a colour to a component; add it here first.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ── surfaces ── */
+  --canvas: 247 245 242; /* #f7f5f2 */
+  --surface: 253 252 250; /* #fdfcfa */
+  --surface-raised: 255 255 255; /* #ffffff — popover, modal */
+  --surface-sunken: 242 239 233; /* #f2efe9 — table header, input well */
+  --surface-overlay: 240 237 231; /* #f0ede7 — hover, active row */
+
+  /* ── lines ── */
+  --border: 230 226 219; /* #e6e2db  1.26:1 */
+  --border-strong: 213 207 197; /* #d5cfc5 */
+
+  /* ── ink ── */
+  --text-primary: 26 24 21; /* #1a1815  17.28:1 */
+  --text-secondary: 92 86 78; /* #5c564e   7.07:1 */
+  --text-muted: 113 105 96; /* #716960   4.51:1 — AA on every surface *and* wash */
+
+  /* ── accent ── */
+  --accent: 28 122 82; /* #1c7a52   5.18:1 */
+  --accent-hover: 24 104 69; /* #186845 */
+  --accent-subtle: 231 242 236; /* #e7f2ec */
+  --accent-fg: 255 255 255; /* on accent fill — 5.31:1 */
+
+  /* ── semantic: each hue means exactly one thing (DESIGN.md §4.3) ── */
+  /* Deliberately the same green as the accent, not an accident.
+     Measured, the two originally differed by 1.02:1 in light mode — a distinction no
+     one can perceive. Two tokens pretending to be different colours is worse than one
+     colour honestly named twice. They stay separate *names* so call sites read
+     semantically ("won", not "accent") and differentiating later is a one-line change;
+     they never collide in practice because accent is a solid fill and won is text on
+     a subtle wash. */
+  --won: 28 122 82; /* = --accent */
+  --won-subtle: 231 242 236; /* = --accent-subtle */
+  --active: 42 109 168; /* #2a6da8 */
+  --active-subtle: 226 236 245;
+  --pending: 194 117 26; /* #c2751a */
+  --pending-subtle: 249 239 226;
+  --lost: 184 69 59; /* #b8453b */
+  --lost-subtle: 249 232 230;
+  --hold: 138 130 121; /* #8a8279 */
+  --hold-subtle: 240 237 232;
+
+  /*
+   * Ink for a label sitting ON a solid fill of that tone.
+   *
+   * It is NOT white everywhere, and assuming so is an accessibility bug: white on the
+   * light-mode amber measures 3.59:1 and on the dark-mode blue 3.40:1 — both below the
+   * 4.5:1 floor. Each value below is the one that actually passes against its own fill,
+   * measured, and the choice flips between modes because the fills flip in lightness.
+   */
+  --won-fg: 255 255 255; /* 5.31:1 */
+  --active-fg: 255 255 255; /* 5.45:1 */
+  --pending-fg: 26 24 21; /* dark ink — 4.94:1 (white would be 3.59) */
+  --lost-fg: 255 255 255; /* 5.31:1 */
+  --hold-fg: 26 24 21; /* dark ink — 4.68:1 (white would be 3.78) */
+
+  /*
+   * The same tone, as TEXT.
+   *
+   * A colour that works as a mark — a chart series, a solid pill, a status dot — is not
+   * automatically readable as text, and assuming one value serves both is the mistake
+   * this pair of tokens prevents. The light amber `#c2751a` measures **3.59:1 against
+   * pure white**: it cannot reach AA as text on any light background, so no amount of
+   * lightening the wash behind it would have helped.
+   *
+   * `--<tone>` stays the mark colour (unchanged, still validated for charts at 3:1).
+   * `--<tone>-ink` is darkened where the mark colour is too light to read.
+   */
+  --won-ink: 28 122 82; /* = --won, already 5.31:1 */
+  --active-ink: 42 109 168; /* = --active, already 5.45:1 */
+  --pending-ink: 143 84 16; /* #8f5410 — darkened; 5.36:1 on its wash */
+  --lost-ink: 158 55 46; /* #9e372e — darkened; 5.83:1 on its wash */
+  --hold-ink: 92 86 78; /* = --text-secondary */
+
+  /* ── charts: validated palette, DESIGN.md §11.1 ── */
+  --chart-1: 28 122 82; /* green  */
+  --chart-2: 194 117 26; /* amber  */
+  --chart-3: 42 109 168; /* blue   */
+  --chart-4: 184 69 59; /* red    */
+  --chart-5: 107 82 163; /* violet */
+  --chart-grid: 238 234 227; /* #eeeae3 */
+  --chart-axis: 213 207 197; /* #d5cfc5 */
+
+  /* ── elevation: warm-tinted, never neutral black on a warm surface ── */
+  --shadow-sm: 0 1px 2px rgb(41 37 31 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(41 37 31 / 0.1);
+  --shadow-lg: 0 12px 32px -8px rgb(41 37 31 / 0.16);
+}
+
+/**
+ * Dark mode.
+ *
+ * Note what is absent: shadows. In dark mode depth comes from the surface ladder
+ * (surface → raised → overlay, each ~4% lighter) plus a hairline. Stacking shadows
+ * on a dark base is what makes dark dashboards look muddy, so the shadow tokens are
+ * flattened to `none` here rather than being re-tinted.
+ */
+.dark {
+  color-scheme: dark;
+
+  --canvas: 16 15 13; /* #100f0d */
+  --surface: 23 22 20; /* #171614 */
+  --surface-raised: 30 28 26; /* #1e1c1a */
+  --surface-sunken: 19 18 16; /* #131210 */
+  --surface-overlay: 38 35 32; /* #262320 */
+
+  --border: 44 41 38; /* #2c2926  1.25:1 */
+  --border-strong: 58 54 50; /* #3a3632 */
+
+  --text-primary: 234 231 226; /* #eae7e2  14.66:1 — ~92% white, never pure */
+  --text-secondary: 168 162 154; /* #a8a29a   7.15:1 */
+  --text-muted: 145 138 131; /* #918a83   4.54:1 — AA on every surface *and* wash */
+
+  --accent: 58 168 119; /* #3aa877   6.07:1 */
+  --accent-hover: 72 184 132; /* #48b884 */
+  --accent-subtle: 23 40 31; /* #17281f */
+  --accent-fg: 13 26 19; /* near-black on the bright fill — 6.00:1, NOT white */
+
+  --won: 58 168 119; /* = --accent */
+  --won-subtle: 23 40 31; /* = --accent-subtle */
+  --active: 74 144 207; /* #4a90cf */
+  --active-subtle: 19 30 41;
+  --pending: 189 127 28; /* #bd7f1c */
+  --pending-subtle: 40 31 16;
+  --lost: 217 97 90; /* #d9615a */
+  --lost-subtle: 43 24 22;
+  --hold: 120 113 106; /* #78716a */
+  --hold-subtle: 33 31 29;
+
+  /* Inverted from light mode: the dark fills are brighter, so dark ink is what passes.
+     `hold` is the exception — it stays muted enough that white still wins. */
+  --won-fg: 26 24 21; /* 5.95:1 (white would be 2.98) */
+  --active-fg: 26 24 21; /* 5.21:1 (white would be 3.40) */
+  --pending-fg: 26 24 21; /* 5.24:1 (white would be 3.38) */
+  --lost-fg: 26 24 21; /* 4.90:1 (white would be 3.62) */
+  --hold-fg: 255 255 255; /* 4.81:1 */
+
+  /* In dark mode the mark colours are already light enough to read on their own washes
+     (4.67–5.18:1 measured), so ink and mark coincide — no separate value needed. */
+  --won-ink: 58 168 119; /* 5.18:1 */
+  --active-ink: 74 144 207; /* 4.96:1 */
+  --pending-ink: 189 127 28; /* 4.81:1 */
+  --lost-ink: 217 97 90; /* 4.67:1 */
+  --hold-ink: 168 162 154; /* = --text-secondary */
+
+  --chart-1: 58 168 119;
+  --chart-2: 189 127 28;
+  --chart-3: 74 144 207;
+  --chart-4: 217 97 90;
+  --chart-5: 149 131 207;
+  --chart-grid: 35 33 32; /* #232120 — ~4% above base */
+  --chart-axis: 51 47 44; /* #332f2c */
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}

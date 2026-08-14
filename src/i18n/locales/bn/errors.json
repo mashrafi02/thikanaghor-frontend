@@ -1,0 +1,57 @@
+{
+  "AUTH_INVALID_CREDENTIALS": "ইমেইল বা পাসওয়ার্ড সঠিক নয়",
+  "AUTH_REQUIRED": "আপনি লগইন করা নেই",
+  "AUTH_SESSION_EXPIRED": "আপনার সেশন শেষ হয়ে গেছে। আবার লগইন করুন",
+  "AUTH_ACCOUNT_LOCKED": "অনেকবার ভুল হয়েছে। {{minutes}} মিনিট পরে আবার চেষ্টা করুন",
+  "AUTH_CURRENT_PASSWORD_INCORRECT": "বর্তমান পাসওয়ার্ড সঠিক নয়",
+  "AUTH_PASSWORD_UNCHANGED": "নতুন পাসওয়ার্ড আগেরটির থেকে আলাদা হতে হবে",
+  "SESSION_NOT_FOUND": "সেশন খুঁজে পাওয়া যায়নি",
+
+  "CSRF_TOKEN_MISSING": "নিরাপত্তা টোকেন পাওয়া যায়নি। পাতাটি রিফ্রেশ করে আবার চেষ্টা করুন",
+  "CSRF_TOKEN_INVALID": "নিরাপত্তা টোকেন সঠিক নয়। পাতাটি রিফ্রেশ করে আবার চেষ্টা করুন",
+  "RATE_LIMITED": "অনেক বেশি অনুরোধ। {{minutes}} মিনিট পরে আবার চেষ্টা করুন",
+  "ORIGIN_NOT_ALLOWED": "এই উৎস থেকে অনুরোধ অনুমোদিত নয়",
+  "ROUTE_NOT_FOUND": "পাতাটি খুঁজে পাওয়া যায়নি",
+  "BODY_INVALID_JSON": "পাঠানো তথ্য সঠিক নয়",
+  "BODY_TOO_LARGE": "পাঠানো তথ্য অনেক বড়",
+  "BODY_UNSUPPORTED_ENCODING": "তথ্যের এনকোডিং সমর্থিত নয়",
+  "BODY_TOO_DEEP": "তথ্যের গঠন অনেক জটিল",
+  "BODY_TOO_MANY_FIELDS": "অনেক বেশি ঘর পাঠানো হয়েছে",
+
+  "VALIDATION_FAILED": "কিছু তথ্য সঠিক নয়। চিহ্নিত ঘরগুলো ঠিক করুন",
+  "INVALID_INPUT": "পাঠানো তথ্য সঠিক নয়",
+
+  "DUPLICATE_RECORD": "এই তথ্য দিয়ে একটি রেকর্ড আগে থেকেই আছে",
+  "RECORD_NOT_FOUND": "রেকর্ডটি খুঁজে পাওয়া যায়নি",
+  "REFERENCE_NOT_FOUND": "সংশ্লিষ্ট রেকর্ডটি খুঁজে পাওয়া যায়নি",
+  "VALUE_TOO_LONG": "লেখাটি অনেক বড়",
+  "FIELD_REQUIRED": "একটি প্রয়োজনীয় ঘর খালি আছে",
+  "RECORD_IN_USE": "এই রেকর্ডটি অন্য জায়গায় ব্যবহৃত হচ্ছে, তাই পরিবর্তন করা যাবে না",
+
+  "PROPERTY_NOT_FOUND": "সম্পত্তিটি খুঁজে পাওয়া যায়নি",
+  "PROPERTY_STATUS_UNCHANGED": "এই সম্পত্তি ইতিমধ্যে “{{status}}” অবস্থায় আছে",
+  "PROPERTY_STATUS_TRANSITION_INVALID": "“{{from}}” থেকে সরাসরি “{{to}}” করা যাবে না। এখন করা যাবে: {{allowed}}",
+  "PROPERTY_STATUS_TERMINAL": "“{{from}}” অবস্থার পর আর পরিবর্তন করা যায় না",
+  "PROPERTY_ALREADY_CLOSED": "এই ডিলটি ইতিমধ্যে সম্পন্ন হয়েছে",
+  "PROPERTY_REOPEN_REQUIRED": "এই ডিলটি বাতিল করা হয়েছিল। বিক্রি দেখাতে হলে আগে আবার চালু করুন",
+  "PROPERTY_COMMISSION_REQUIRES_CLOSE": "কমিশন শুধু সম্পন্ন ডিলে যোগ করা যায়",
+  "PROPERTY_NOT_DELETED": "এই সম্পত্তিটি মুছে ফেলা হয়নি",
+
+  "BUYER_NOT_FOUND": "ক্রেতাকে খুঁজে পাওয়া যায়নি",
+  "BUYER_NOT_DELETED": "এই ক্রেতাকে মুছে ফেলা হয়নি",
+  "INQUIRY_NOT_FOUND": "সংযোগটি খুঁজে পাওয়া যায়নি",
+  "INQUIRY_DUPLICATE": "{{buyerName}} এই সম্পত্তির সাথে আগেই যুক্ত আছেন",
+
+  "VIDEO_URL_EMPTY": "ভিডিও লিংক দিন",
+  "VIDEO_URL_MALFORMED": "লিংকটি সঠিক নয়। https:// সহ পুরো ঠিকানা দিন",
+  "VIDEO_SCHEME_UNSUPPORTED": "শুধু https লিংক ব্যবহার করা যাবে",
+  "VIDEO_HOST_UNSUPPORTED": "শুধু ফেসবুক, টিকটক ও ইউটিউব লিংক যোগ করা যায়",
+  "VIDEO_ID_NOT_FOUND": "{{provider}} লিংকে ভিডিও খুঁজে পাওয়া যায়নি। শেয়ার বাটন থেকে পুরো লিংক নিন",
+  "VIDEO_TIKTOK_SHORT_LINK": "ছোট টিকটক লিংক কাজ করে না। ভিডিওটি খুলে পুরো লিংক নিন — যেমন tiktok.com/@username/video/1234567890",
+
+  "INTERNAL": "কিছু একটা সমস্যা হয়েছে। একটু পরে আবার চেষ্টা করুন",
+
+  "OFFLINE": "আপনি অফলাইনে আছেন। ইন্টারনেট সংযোগ দেখুন",
+  "SERVER_UNREACHABLE": "সার্ভারের সাথে সংযোগ করা যাচ্ছে না",
+  "UNKNOWN": "কিছু একটা সমস্যা হয়েছে"
+}

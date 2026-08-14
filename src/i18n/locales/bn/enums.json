@@ -1,0 +1,63 @@
+{
+  "propertyStatus": {
+    "NEW": "নতুন",
+    "CONTACTED": "যোগাযোগ হয়েছে",
+    "VISIT_SCHEDULED": "পরিদর্শন নির্ধারিত",
+    "NEGOTIATING": "দরদাম চলছে",
+    "AGREEMENT": "চুক্তি হয়েছে",
+    "CLOSED_WON": "বিক্রি সম্পন্ন",
+    "CLOSED_LOST": "বাতিল হয়েছে",
+    "ON_HOLD": "স্থগিত"
+  },
+  "propertyType": {
+    "LAND": "জমি",
+    "PLOT": "প্লট",
+    "FLAT": "ফ্ল্যাট",
+    "BUILDING": "ভবন",
+    "COMMERCIAL": "বাণিজ্যিক"
+  },
+  "areaUnit": {
+    "KATHA": "কাঠা",
+    "BIGHA": "বিঘা",
+    "DECIMAL": "শতাংশ",
+    "SQFT": "বর্গফুট",
+    "SQ_YARD": "বর্গগজ",
+    "ACRE": "একর"
+  },
+  "buyerStatus": {
+    "ACTIVE": "সক্রিয়",
+    "MATCHED": "মিল হয়েছে",
+    "CLOSED": "সম্পন্ন",
+    "INACTIVE": "নিষ্ক্রিয়"
+  },
+  "inquiryStatus": {
+    "INTERESTED": "আগ্রহী",
+    "VISITED": "পরিদর্শন করেছে",
+    "OFFER_MADE": "প্রস্তাব দিয়েছে",
+    "REJECTED": "প্রত্যাখ্যান",
+    "WON": "সফল"
+  },
+  "videoProvider": {
+    "FACEBOOK": "ফেসবুক",
+    "TIKTOK": "টিকটক",
+    "YOUTUBE": "ইউটিউব"
+  },
+  "sourcePlatform": {
+    "FACEBOOK": "ফেসবুক",
+    "TIKTOK": "টিকটক",
+    "YOUTUBE": "ইউটিউব",
+    "WHATSAPP": "হোয়াটসঅ্যাপ",
+    "DIRECT": "সরাসরি",
+    "OTHER": "অন্যান্য"
+  },
+  "facing": {
+    "NORTH": "উত্তর",
+    "SOUTH": "দক্ষিণ",
+    "EAST": "পূর্ব",
+    "WEST": "পশ্চিম",
+    "NORTH_EAST": "উত্তর-পূর্ব",
+    "NORTH_WEST": "উত্তর-পশ্চিম",
+    "SOUTH_EAST": "দক্ষিণ-পূর্ব",
+    "SOUTH_WEST": "দক্ষিণ-পশ্চিম"
+  }
+}

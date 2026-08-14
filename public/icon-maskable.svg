@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ThikanaGhor">
+  <!--
+    ঠিকানাঘর — "address house".
+
+    A house whose roof is drawn as the pin that marks a place: the two ideas the app is
+    about, in one shape. Deliberately geometric and heavy-stroked so it survives being
+    rendered at 16px in a browser tab, where anything finer turns to mush.
+
+    Maskable variant: square, full-bleed background. All content sits inside the safe
+    circle (radius 40% of the canvas), so no platform mask can clip the house.
+  -->
+  <rect width="512" height="512" fill="#1c7a52" />
+
+  <!-- roof, eaves overhanging the walls so the silhouette reads as a house -->
+  <path
+    d="M256 104 L426 250 A16 16 0 0 1 416 278 L96 278 A16 16 0 0 1 86 250 Z"
+    fill="#ffffff"
+  />
+
+  <!-- walls, with the doorway cut out rather than drawn, so the mark stays two-tone -->
+  <path
+    d="M164 298 H348 A16 16 0 0 1 364 314 V400 A16 16 0 0 1 348 416 H164 A16 16 0 0 1 148 400 V314 A16 16 0 0 1 164 298 Z
+       M228 416 V354 A28 28 0 0 1 284 354 V416 Z"
+    fill="#ffffff"
+    fill-rule="evenodd"
+  />
+</svg>

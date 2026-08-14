@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- lang is Bangla by default and rewritten by the boot script below from the stored
+     preference. It matters for more than translation: :lang(bn) drives the type
+     adjustment, and screen readers use it to pick a pronunciation. -->
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f7f5f2" />
+    <meta name="description" content="ThikanaGhor — property referral dashboard" />
+    <title>ঠিকানাঘর · ThikanaGhor</title>
+
+    <!--
+      Without these the browser silently requests /favicon.ico and 404s on every load.
+      The SVG is the primary icon (one file, sharp at any size); the 192px PNG is the
+      fallback for the handful of places that still refuse SVG favicons.
+
+      The manifest link is injected at build time by vite-plugin-pwa, so it is not here.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!--
+      Theme and language applied before first paint.
+
+      This has to be inline and synchronous. A module import runs after the first
+      frame, so in dark mode the app would flash light on every single load — the
+      most visible bug a themed app can ship. Kept deliberately tiny and dependency-free.
+    -->
+    <script>
+      (function () {
+        try {
+          var root = document.documentElement;
+
+          // ?theme= and ?lang= override the stored value and persist it. Useful for
+          // sharing a link that opens in a known state, for screenshot automation, and
+          // for reproducing a bug report in the reporter's exact theme.
+          var params = new URLSearchParams(location.search);
+          var themeParam = params.get('theme');
+          var langParam = params.get('lang');
+          if (themeParam === 'light' || themeParam === 'dark' || themeParam === 'system') {
+            localStorage.setItem('tg.theme', themeParam);
+          }
+          if (langParam === 'bn' || langParam === 'en') {
+            localStorage.setItem('tg.lang', langParam);
+          }
+
+          var theme = localStorage.getItem('tg.theme') || 'system';
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = theme === 'dark' || (theme === 'system' && systemDark);
+
+          root.classList.toggle('dark', dark);
+
+          var lang = localStorage.getItem('tg.lang') || 'bn';
+          root.lang = lang;
+
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', dark ? '#100f0d' : '#f7f5f2');
+        } catch (e) {
+          /* Private mode can throw on localStorage. Defaults in the markup stand. */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,190 @@
+/* Fonts, self-hosted via @fontsource. Only the weights the design system uses
+   (400/500/600) — DESIGN.md §5.3. Latin subset for Plex, Bengali for Hind Siliguri. */
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import '@fontsource/hind-siliguri/bengali-400.css';
+@import '@fontsource/hind-siliguri/bengali-500.css';
+@import '@fontsource/hind-siliguri/bengali-600.css';
+/* Hind Siliguri's Latin glyphs, so a mixed-script line has a consistent fallback
+   rather than dropping to system-ui mid-sentence. */
+@import '@fontsource/hind-siliguri/latin-400.css';
+
+@import './tokens.css';
+
+/**
+ * Bengali digits at weight 500 come from the 600 file.
+ *
+ * Hind Siliguri's Medium (500) has a defective ১ (U+09E7): the counter collapses, so
+ * the glyph renders as a thin sliver with no loop and reads as an apostrophe. Measured
+ * against ২ in the same face, its ink box is only **0.62** of the height — against 0.78
+ * at weight 400 and 0.73 at 600, both of which draw the loop correctly.
+ *
+ * That is the worst possible weight for it to be broken in, because `text-caption` is
+ * 12px/500 — so every money shorthand under an input ("৳ ১.২ লক্ষ"), every stat hint and
+ * every chip rendered the digit one as punctuation.
+ *
+ * The override is scoped by `unicode-range` to the ten Bengali digits, so only they are
+ * redirected; all other Bengali text at 500 still uses the Medium file and the page's
+ * typographic colour is unchanged. It costs no extra download — the 600 file is already
+ * loaded for headings — and nudging numerals very slightly heavier than their labels is
+ * what DESIGN.md §2 asks for anyway.
+ *
+ * Declared after the @fontsource imports so it wins for that range.
+ */
+@font-face {
+  font-family: 'Hind Siliguri';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('@fontsource/hind-siliguri/files/hind-siliguri-bengali-600-normal.woff2')
+    format('woff2');
+  unicode-range: U+09E6-09EF;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Deliberately NOT `overflow-x: hidden`. It would mask a real overflow instead of
+       revealing it, and on html/body it breaks `position: sticky` descendants — which
+       this app relies on for the topbar, the detail sidebar and sticky table columns.
+       Wide content scrolls inside its own container (see .rail); the page never does. */
+    /* iOS overscroll shows the page background behind the app; make it match. */
+    background-color: rgb(var(--canvas));
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans text-body antialiased;
+    /* Bangla is the default language (DESIGN.md §14), so the Bangla face leads the
+       stack and Plex is the Latin fallback within it. */
+    font-family: 'Hind Siliguri', 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  /* English switches the order: Plex leads, Hind Siliguri covers any Bangla that
+     appears inside English UI (a property title, a contact name). */
+  html:lang(en) body {
+    font-family: 'IBM Plex Sans', 'Hind Siliguri', system-ui, sans-serif;
+  }
+
+  /*
+   * Bengali conjuncts and the matra need more vertical room than Latin.
+   *
+   * This is line-height ONLY, deliberately. The obvious version —
+   * `:lang(bn) { font-size: calc(1em + 1px) }` — is a trap: `lang` inherits, so the
+   * selector matches every descendant, and a relative font-size compounds with nesting
+   * depth. A nav label four elements deep came out nearly double its intended size.
+   *
+   * A unitless line-height does not compound: it inherits as the ratio and is computed
+   * against each element's own font-size. Hind Siliguri's x-height is generous enough
+   * that the extra pixel was never needed anyway — the vertical room was the real
+   * requirement.
+   */
+  :lang(bn) {
+    line-height: 1.65;
+  }
+
+  /* Headings are set tighter; 1.65 on a 28px title opens gaps that read as broken. */
+  :lang(bn) :is(h1, h2, h3) {
+    line-height: 1.4;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2;
+    --tw-ring-offset-color: rgb(var(--canvas));
+  }
+
+  /* Digits must line up down a column; anything with this class opts in.
+     Body copy and hero figures stay proportional — DESIGN.md §5.4. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Horizontal swipe rail — DESIGN.md §8. Not a carousel: no arrows, native scroll. */
+  .rail {
+    @apply flex gap-3 overflow-x-auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    /* Stops a horizontal swipe from triggering browser back-navigation. */
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail > * {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+
+  /* The sheet enters from the bottom on a phone and from the trailing edge on desktop.
+     Written as a utility rather than two conditional classes so the component does not
+     need to know the breakpoint. */
+  .animate-sheet-in {
+    animation: sheet-in-bottom 320ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  @media (min-width: 768px) {
+    .animate-sheet-in {
+      animation: sheet-in-side 320ms cubic-bezier(0.2, 0, 0, 1);
+    }
+  }
+
+  /* Reduced motion gets a cross-fade instead of a slide — the panel still announces
+     itself, without the travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-sheet-in {
+      animation: fade-in 160ms ease-out;
+    }
+  }
+
+  @keyframes sheet-in-bottom {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes sheet-in-side {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* Undo-toast countdown. Defined here rather than in the Tailwind config because it
+     is driven by an inline duration that varies per toast. */
+  @keyframes toast-countdown {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      /* 0.01ms rather than 0s: transitionend handlers still fire, so components
+         that wait for a transition to finish do not hang. */
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

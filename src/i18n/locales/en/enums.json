@@ -1,0 +1,63 @@
+{
+  "propertyStatus": {
+    "NEW": "New",
+    "CONTACTED": "Contacted",
+    "VISIT_SCHEDULED": "Visit scheduled",
+    "NEGOTIATING": "Negotiating",
+    "AGREEMENT": "Agreement",
+    "CLOSED_WON": "Sold",
+    "CLOSED_LOST": "Lost",
+    "ON_HOLD": "On hold"
+  },
+  "propertyType": {
+    "LAND": "Land",
+    "PLOT": "Plot",
+    "FLAT": "Flat",
+    "BUILDING": "Building",
+    "COMMERCIAL": "Commercial"
+  },
+  "areaUnit": {
+    "KATHA": "Katha",
+    "BIGHA": "Bigha",
+    "DECIMAL": "Decimal",
+    "SQFT": "sq ft",
+    "SQ_YARD": "sq yd",
+    "ACRE": "Acre"
+  },
+  "buyerStatus": {
+    "ACTIVE": "Active",
+    "MATCHED": "Matched",
+    "CLOSED": "Closed",
+    "INACTIVE": "Inactive"
+  },
+  "inquiryStatus": {
+    "INTERESTED": "Interested",
+    "VISITED": "Visited",
+    "OFFER_MADE": "Offer made",
+    "REJECTED": "Rejected",
+    "WON": "Won"
+  },
+  "videoProvider": {
+    "FACEBOOK": "Facebook",
+    "TIKTOK": "TikTok",
+    "YOUTUBE": "YouTube"
+  },
+  "sourcePlatform": {
+    "FACEBOOK": "Facebook",
+    "TIKTOK": "TikTok",
+    "YOUTUBE": "YouTube",
+    "WHATSAPP": "WhatsApp",
+    "DIRECT": "Direct",
+    "OTHER": "Other"
+  },
+  "facing": {
+    "NORTH": "North",
+    "SOUTH": "South",
+    "EAST": "East",
+    "WEST": "West",
+    "NORTH_EAST": "North-east",
+    "NORTH_WEST": "North-west",
+    "SOUTH_EAST": "South-east",
+    "SOUTH_WEST": "South-west"
+  }
+}
