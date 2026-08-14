@@ -13,31 +13,72 @@
 @import './tokens.css';
 
 /**
- * Bengali digits at weight 500 come from the 600 file.
+ * Bengali digits are served from Hind Siliguri's **700** file, at every weight.
  *
- * Hind Siliguri's Medium (500) has a defective ১ (U+09E7): the counter collapses, so
- * the glyph renders as a thin sliver with no loop and reads as an apostrophe. Measured
- * against ২ in the same face, its ink box is only **0.62** of the height — against 0.78
- * at weight 400 and 0.73 at 600, both of which draw the loop correctly.
+ * The family ships two different ১ (U+09E7) outlines. Weights 300 and 700 draw it
+ * full-height, level with its sibling digits. Weights 400, 500 and 600 draw a deformed
+ * one that touches neither the cap line nor the baseline — it floats mid-line at 60–78%
+ * size and reads as a comma. Those three are exactly the weights this app uses.
  *
- * That is the worst possible weight for it to be broken in, because `text-caption` is
- * 12px/500 — so every money shorthand under an input ("৳ ১.২ লক্ষ"), every stat hint and
- * every chip rendered the digit one as punctuation.
+ * Measured ink box of ১ against ২ in the same face (top gap = how far ১'s top sits below
+ * the other digits'):
  *
- * The override is scoped by `unicode-range` to the ten Bengali digits, so only they are
- * redirected; all other Bengali text at 500 still uses the Medium file and the page's
- * typographic colour is unchanged. It costs no extra download — the 600 file is already
- * loaded for headings — and nudging numerals very slightly heavier than their labels is
- * what DESIGN.md §2 asks for anyway.
+ *   weight   top gap   height vs ২
+ *     300       0         0.93     correct
+ *     400       6         0.78     deformed
+ *     500      14         0.62     deformed — and `text-caption` is 12px/500
+ *     600       9         0.73     deformed
+ *     700       0         0.92     correct
  *
- * Declared after the @fontsource imports so it wins for that range.
+ * Every other Bengali digit is fine at all five weights, which is why only the one was
+ * wrong. ০ and ৩ are also shorter than the rest, but being round they still read as
+ * digits.
+ *
+ * **Do not "simplify" this to the 600 file.** That was tried: 600 is also a deformed
+ * outline, so it produced a bolder blob rather than a correct glyph, and looked worse
+ * than the sliver it replaced. 700 is a different drawing, not a heavier one.
+ *
+ * Scope notes, since these rules are deliberately narrow:
+ *   • `unicode-range` covers only U+09E6–U+09EF, the ten Bengali digits. Latin digits and
+ *     all Bengali letters are untouched and keep their normal faces.
+ *   • **One rule per weight, never a `font-weight: 400 600` range.** That was tried and
+ *     broke Bengali *text*: a range face matches the requested weight first, and when the
+ *     character turns out to be outside its `unicode-range` the browser abandons the whole
+ *     family and drops to a system font — every Bengali letter silently rendered in Noto
+ *     instead of Hind Siliguri. `unicode-range` only partitions faces of the *same*
+ *     weight, so each weight needs its own pair.
+ *   • It costs one extra 71 kB font file, and only in Bangla — `unicode-range` means the
+ *     browser skips the download entirely on a page with no Bengali digits.
+ *
+ * Placed after every `@import` on purpose: CSS requires imports to precede other rules,
+ * and an `@font-face` above them makes the browser drop the imports that follow.
  */
 @font-face {
   font-family: 'Hind Siliguri';
   font-style: normal;
   font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/hind-siliguri/files/hind-siliguri-bengali-700-normal.woff2')
+    format('woff2');
+  unicode-range: U+09E6-09EF;
+}
+
+@font-face {
+  font-family: 'Hind Siliguri';
+  font-style: normal;
+  font-display: swap;
   font-weight: 500;
-  src: url('@fontsource/hind-siliguri/files/hind-siliguri-bengali-600-normal.woff2')
+  src: url('@fontsource/hind-siliguri/files/hind-siliguri-bengali-700-normal.woff2')
+    format('woff2');
+  unicode-range: U+09E6-09EF;
+}
+
+@font-face {
+  font-family: 'Hind Siliguri';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url('@fontsource/hind-siliguri/files/hind-siliguri-bengali-700-normal.woff2')
     format('woff2');
   unicode-range: U+09E6-09EF;
 }
