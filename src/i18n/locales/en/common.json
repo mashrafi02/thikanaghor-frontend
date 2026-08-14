@@ -137,7 +137,8 @@
     "addVideo": "Add video",
     "sourceUrl": "Original listing link",
     "phoneNormalised": "Will be saved as {{phone}}",
-    "sidePanel": "Summary and actions"
+    "sidePanel": "Summary and actions",
+    "tapToPlay": "Tap to play"
   },
   "form": {
     "required": "{{field}} is required",

@@ -137,7 +137,8 @@
     "addVideo": "ভিডিও যোগ করুন",
     "sourceUrl": "মূল বিজ্ঞাপনের লিংক",
     "phoneNormalised": "সংরক্ষণ হবে: {{phone}}",
-    "sidePanel": "সারসংক্ষেপ ও কাজ"
+    "sidePanel": "সারসংক্ষেপ ও কাজ",
+    "tapToPlay": "চালাতে চাপ দিন"
   },
   "form": {
     "required": "{{field}} দিতে হবে",

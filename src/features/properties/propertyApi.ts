@@ -57,6 +57,27 @@ export const propertyApi = baseApi.injectEndpoints({
           : [{ type: 'Property' as const, id: 'LIST' }],
     }),
 
+    /**
+     * A video's poster, for the providers that need a round trip to get one.
+     *
+     * Only TikTok reaches here — YouTube's arrives on the property itself and Facebook
+     * has none — so callers skip this query for the other two rather than making a
+     * request that is known to answer 204.
+     *
+     * A 204 is a legitimate answer, not a failure, so it resolves to null instead of
+     * landing in the error branch and lighting up an error state over a missing image.
+     */
+    getVideoThumbnail: builder.query<{ thumbnailUrl: string } | null, string>({
+      query: (videoId) => ({
+        url: `/properties/videos/${videoId}/thumbnail`,
+        responseHandler: async (response) =>
+          response.status === 204 ? null : ((await response.json()) as unknown),
+      }),
+      transformResponse: (
+        response: { data?: { thumbnail?: { thumbnailUrl: string } } } | null,
+      ) => response?.data?.thumbnail ?? null,
+    }),
+
     getProperty: builder.query<PropertyDetail, string>({
       query: (id) => `/properties/${id}`,
       transformResponse: unwrap<PropertyDetail, 'property'>('property'),
@@ -185,6 +206,7 @@ export const propertyApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetVideoThumbnailQuery,
   useGetPropertiesQuery,
   useGetPropertyQuery,
   useCreatePropertyMutation,

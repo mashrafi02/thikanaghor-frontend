@@ -1,7 +1,9 @@
-import { memo, useState } from 'react';
+import { memo, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
+import { useGetVideoThumbnailQuery } from './propertyApi';
+import { videoSourceHandle, withFacebookSize } from './videoFrame';
 import { ArrowSquareOut, FacebookLogo, Play, TiktokLogo, YoutubeLogo } from '@/lib/icons';
 import type { PropertyVideo } from './types';
 
@@ -43,12 +45,49 @@ const ASPECT = {
 export const VideoEmbed = memo(function VideoEmbed({ video }: { video: PropertyVideo }) {
   const { t } = useTranslation();
   const [playing, setPlaying] = useState(false);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ width: number; height: number } | null>(null);
   const meta = PROVIDER_META[video.provider];
   const providerName = t(meta.labelKey);
+
+  // TikTok is the only provider whose poster needs a request; YouTube's arrives on the
+  // property and Facebook has none, so both skip it rather than asking for a known 204.
+  const { data: fetched } = useGetVideoThumbnailQuery(video.id, {
+    skip: video.provider !== 'TIKTOK',
+  });
+  const poster = video.thumbnailUrl ?? fetched?.thumbnailUrl ?? null;
+  // Only consulted when there is no poster — which in practice means Facebook.
+  const handle = videoSourceHandle(video.url);
+
+  // Measured before paint so the Facebook src is right on its first load — reading it
+  // after would mean swapping the iframe's src and reloading the player.
+  useLayoutEffect(() => {
+    const element = frameRef.current;
+    if (!element) return;
+
+    const measure = () => {
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0)
+        setBox({ width: rect.width, height: rect.height });
+    };
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const frameSrc =
+    video.provider === 'FACEBOOK' && box
+      ? withFacebookSize(video.embedUrl, box)
+      : video.embedUrl;
 
   return (
     <figure className="flex flex-col gap-2">
       <div
+        ref={frameRef}
         className={cn(
           'relative w-full overflow-hidden rounded-md border border-border bg-surface-sunken',
           ASPECT[video.provider],
@@ -56,7 +95,7 @@ export const VideoEmbed = memo(function VideoEmbed({ video }: { video: PropertyV
       >
         {playing ? (
           <iframe
-            src={video.embedUrl}
+            src={frameSrc}
             title={video.label ?? `${providerName} — ${t('property.video')}`}
             className="absolute inset-0 size-full"
             // No sandbox: these providers need scripts and same-origin to function, and
@@ -76,15 +115,57 @@ export const VideoEmbed = memo(function VideoEmbed({ video }: { video: PropertyV
             }}
             className={cn(
               'group absolute inset-0 flex flex-col items-center justify-center gap-3',
-              'text-ink-secondary transition-colors duration-fast hover:bg-surface-overlay',
+              'transition-colors duration-fast',
+              poster ? 'text-white' : 'text-ink-secondary hover:bg-surface-overlay',
             )}
           >
-            <span className="flex size-14 items-center justify-center rounded-full bg-surface text-ink shadow-sm ring-1 ring-border">
+            {poster && (
+              <>
+                <img
+                  src={poster}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                  // `contain`, not `cover`: the poster's aspect need not match the frame,
+                  // and cropping the preview would misrepresent the video the same way
+                  // the old iframe did.
+                  className="absolute inset-0 size-full object-contain"
+                  // A poster that 404s must leave the plain placeholder behind, not a
+                  // broken-image icon.
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
+                  }}
+                />
+                {/* Scrim: the play button and provider name have to stay legible over an
+                    arbitrary frame of someone's video. */}
+                <span aria-hidden="true" className="absolute inset-0 bg-black/35" />
+              </>
+            )}
+
+            {/* Facebook publishes no thumbnail without an app token, so its frame can
+                never be a picture. Rather than leave an empty box it shows what is
+                actually known about the clip — what the video is of, and who posted it —
+                both from data already held, with no request and nothing invented.
+
+                Deliberately text and no watermark: a giant tinted logo behind the play
+                button is decoration, which DESIGN.md §2 rules out, and it muddied the
+                one control the frame exists to offer. */}
+            <span className="relative flex size-14 items-center justify-center rounded-full bg-surface text-ink shadow-sm ring-1 ring-border">
               <Icon icon={Play} size="lg" weight="fill" />
             </span>
-            <span className="flex items-center gap-2 text-body-sm">
-              <Icon icon={meta.icon} size="sm" />
-              {providerName}
+
+            <span className="relative flex max-w-[80%] flex-col items-center gap-1 text-center">
+              {video.label && !poster && (
+                <span className="text-body font-medium text-ink">{video.label}</span>
+              )}
+              <span className="flex items-center gap-2 text-body-sm">
+                <Icon icon={meta.icon} size="sm" />
+                {handle && !poster ? handle : providerName}
+              </span>
+              {!poster && (
+                <span className="text-caption text-ink-muted">{t('property.tapToPlay')}</span>
+              )}
             </span>
           </button>
         )}

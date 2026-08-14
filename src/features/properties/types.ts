@@ -27,6 +27,15 @@ export interface PropertyVideo {
   embedUrl: string;
   label: string | null;
   sortOrder: number;
+  /**
+   * Poster image, or null when the provider does not publish one.
+   *
+   * Populated for YouTube on every response — it is derived from the video id with no
+   * network call. TikTok's needs an oEmbed round trip and is fetched on demand from
+   * `/properties/videos/:id/thumbnail`. Facebook has none without a registered app
+   * token, so it stays null and the placeholder shows its provider mark instead.
+   */
+  thumbnailUrl: string | null;
 }
 
 /** Shared by list rows and the detail page. */
