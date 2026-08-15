@@ -26,6 +26,12 @@ export const Sidebar = memo(function Sidebar({
       aria-label={t('nav.primary')}
       className={cn(
         'hidden shrink-0 flex-col border-e border-border bg-surface md:flex',
+        // Pinned to the viewport so the nav is reachable from the bottom of a long list.
+        // `self-start` is the load-bearing half: as a stretched flex child the rail would
+        // be exactly as tall as the scrolling container, leaving sticky nothing to move
+        // within, so it would sit there looking correct and do nothing. `h-dvh` then gives
+        // it a viewport-sized box rather than a content-sized one.
+        'sticky top-0 z-10 h-dvh self-start',
         'transition-[width] duration-base ease-standard',
         collapsed ? 'w-[72px]' : 'w-[240px]',
       )}
@@ -43,7 +49,10 @@ export const Sidebar = memo(function Sidebar({
           to a plain <div> then left the brand outside every landmark, which axe flags as
           a `region` violation, so the <nav> moved outward rather than the wrapper
           disappearing. */}
-      <div className="flex flex-1 flex-col gap-1 p-2">
+      {/* Scrolls on its own once the rail is viewport-height: a short window, or more nav
+          items later, would otherwise push the collapse button off the bottom edge with no
+          way to reach it. */}
+      <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
