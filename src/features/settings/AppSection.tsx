@@ -17,9 +17,11 @@ import { SettingRow, SettingsSection } from './SettingsSection';
  *
  *  • already installed — say so, offer nothing;
  *  • a prompt is available — offer it;
- *  • the browser has not offered one yet (Chrome withholds it until it decides the app
- *    is worth installing, and Firefox/desktop Safari never fire it at all) — explain
- *    rather than showing a button that would do nothing;
+ *  • the browser has not offered one yet — Chrome withholds `beforeinstallprompt` until
+ *    its own engagement heuristic is satisfied, and Firefox and desktop Safari never fire
+ *    it at all. The copy says "not offered yet" and points at the browser menu rather
+ *    than claiming the browser is incapable, which is usually false and leaves the user
+ *    with nowhere to go;
  *  • installed *during* this visit — confirm it.
  *
  * A disabled "Install" button with no explanation is the usual version of this, and it

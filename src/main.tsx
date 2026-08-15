@@ -11,6 +11,7 @@ import '@/styles/index.css';
 import { ToastProvider } from '@/components/ui/toast/ToastProvider';
 import { store } from '@/app/store';
 import { startServiceWorker } from '@/hooks/useAppUpdate';
+import { startInstallPromptCapture } from '@/hooks/useInstallPrompt';
 import { router } from '@/routes/router';
 
 // Registered here, not from a component, so it runs for every visitor — including one
@@ -18,6 +19,11 @@ import { router } from '@/routes/router';
 // the authenticated shell leaves the login page uncached and the app uninstallable until
 // after a first successful login. See the note in useAppUpdate.
 startServiceWorker();
+
+// Chrome fires `beforeinstallprompt` once, moments after load. The Settings page is a
+// lazy route, so importing the hook only from there meant nothing was listening when the
+// event arrived and the install offer never appeared. Same reason as the line above.
+startInstallPromptCapture();
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element #root not found in index.html');

@@ -9,9 +9,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * `canInstall` stays false forever, and the install button never appears — on a build
  * where installation works perfectly.
  *
- * The fix is to register at module scope, at import time. The first test below is the one
- * that actually pins that down: it fires the event with no component mounted at all, and
- * then mounts one and expects it to already know.
+ * Module scope alone was not the fix, which is how it shipped broken: the only importer
+ * was the lazy Settings route, so the module did not even load until long after the event
+ * had fired. Startup now calls `startInstallPromptCapture()` explicitly, and two tests
+ * pin that down — one fires the event with nothing mounted and expects a later mount to
+ * already know, the other asserts that merely importing the module listens to nothing.
  */
 
 interface FakePromptEvent extends Event {
@@ -28,10 +30,17 @@ function makeEvent(outcome: 'accepted' | 'dismissed' = 'accepted'): FakePromptEv
   return event;
 }
 
-/** Fresh module instance per test — the captured event lives in module scope. */
+/**
+ * Fresh module instance per test, with capture started the way `main.tsx` starts it.
+ *
+ * Importing the module is deliberately *not* enough to begin listening — that was the bug:
+ * the only importer was the lazy Settings route, so nothing was listening when Chrome
+ * fired the event moments after load. Startup must call this explicitly.
+ */
 async function loadHook() {
   vi.resetModules();
   const module = await import('../src/hooks/useInstallPrompt');
+  module.startInstallPromptCapture();
   return module.useInstallPrompt;
 }
 
@@ -120,13 +129,29 @@ describe('useInstallPrompt', () => {
     expect(result.current.canInstall).toBe(false);
   });
 
-  it('registers its listeners exactly once per module instance', async () => {
+  it('registers its listeners exactly once, however many times start is called', async () => {
+    vi.resetModules();
+    const module = await import('../src/hooks/useInstallPrompt');
+
     const addSpy = vi.spyOn(window, 'addEventListener');
-    await loadHook();
+    module.startInstallPromptCapture();
+    module.startInstallPromptCapture();
 
     const types = addSpy.mock.calls.map(([type]) => type);
     expect(types.filter((type) => type === 'beforeinstallprompt')).toHaveLength(1);
     expect(types).toContain('appinstalled');
+    addSpy.mockRestore();
+  });
+
+  it('does not listen until startup calls it', async () => {
+    // The regression that shipped: the module was only imported by a lazy route, so the
+    // event had already fired by the time anything was listening. Importing alone must
+    // therefore be inert, and `main.tsx` must be the thing that starts it.
+    vi.resetModules();
+    const addSpy = vi.spyOn(window, 'addEventListener');
+    await import('../src/hooks/useInstallPrompt');
+
+    expect(addSpy.mock.calls.map(([type]) => type)).not.toContain('beforeinstallprompt');
     addSpy.mockRestore();
   });
 

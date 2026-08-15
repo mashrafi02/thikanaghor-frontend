@@ -299,7 +299,7 @@
     "installHint": "Adding it to the home screen opens it like an app",
     "installAction": "Install",
     "installed": "Installed",
-    "installUnavailable": "This browser cannot install it",
+    "installUnavailable": "Not offered yet — use the browser menu’s “Add to Home screen”",
     "connection": "Connection",
     "connectionHint": "Without internet, new changes cannot be saved",
     "online": "Connected",
