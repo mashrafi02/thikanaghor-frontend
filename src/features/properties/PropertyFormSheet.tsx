@@ -8,7 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { MoneyInput } from '@/components/ui/MoneyInput';
-import { PhoneInput } from '@/components/ui/PhoneInput';
+import { PhoneListField } from '@/components/ui/PhoneListField';
 import { Select } from '@/components/ui/Select';
 import { Sheet } from '@/components/ui/Sheet';
 import { useApiError } from '@/hooks/useApiError';
@@ -65,7 +65,10 @@ export function PropertyFormSheet({
     return {
       title: property.title,
       contactName: property.contactName,
-      contactPhone: property.contactPhoneDisplay,
+      phones: property.phones.map((phone) => ({
+        number: phone.display,
+        label: phone.label ?? '',
+      })),
       type: property.type,
       askingPrice: property.askingPrice ?? '',
       commissionRate: property.commissionRate,
@@ -209,37 +212,16 @@ export function PropertyFormSheet({
               {...(errors.title?.message ? { error: errors.title.message } : {})}
             />
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Input
-                label={t('property.contactName')}
-                {...register('contactName')}
-                {...(errors.contactName?.message ? { error: errors.contactName.message } : {})}
-              />
-              {/*
-                Controller, not watch + setValue.
+            <Input
+              label={t('property.contactName')}
+              {...register('contactName')}
+              {...(errors.contactName?.message ? { error: errors.contactName.message } : {})}
+            />
 
-                A field set only through `setValue` is never entered into RHF's field
-                registry, so `shouldValidate` has nothing to validate and its error never
-                clears once shown — the user corrects the number and the message
-                stubbornly stays put. Controller registers it properly, so it revalidates
-                on change like every `register`ed input.
-              */}
-              <Controller
-                control={control}
-                name="contactPhone"
-                render={({ field, fieldState }) => (
-                  <PhoneInput
-                    label={t('property.contactPhone')}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                    {...(fieldState.error?.message ? { error: fieldState.error.message } : {})}
-                  />
-                )}
-              />
-            </div>
+            {/* Full width, not sharing the two-column row with the contact name. The
+                phone list is itself a two-column grid per row plus a delete button, and
+                nesting that inside half the sheet truncated every label to "Owne". */}
+            <PhoneListField control={control} name="phones" label={t('property.contactPhone')} />
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Select

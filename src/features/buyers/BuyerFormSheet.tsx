@@ -8,13 +8,13 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { MoneyInput } from '@/components/ui/MoneyInput';
-import { PhoneInput } from '@/components/ui/PhoneInput';
+import { PhoneListField } from '@/components/ui/PhoneListField';
 import { Select } from '@/components/ui/Select';
 import { Sheet } from '@/components/ui/Sheet';
 import { useApiError } from '@/hooks/useApiError';
 import { cn } from '@/lib/cn';
 import { normalizeNumericInput } from '@/lib/format';
-import { isValidBdPhone } from '@/lib/phone';
+import { isValidBdPhone, normalizeBdPhone } from '@/lib/phone';
 import { Warning } from '@/lib/icons';
 import { useCreateBuyerMutation, useUpdateBuyerMutation } from './buyerApi';
 import type { Buyer } from './types';
@@ -39,11 +39,35 @@ function buildSchema(t: Translate) {
         .trim()
         .min(1, t('form.required', { field: t('buyer.name') }))
         .max(120),
-      phone: z
-        .string()
-        .trim()
+      // Same shape as the property form's — see propertySchema.ts for why the duplicate
+      // check runs on the normalised number.
+      phones: z
+        .array(
+          z.object({
+            number: z
+              .string()
+              .trim()
+              .min(1, t('form.required', { field: t('buyer.phone') }))
+              .refine(isValidBdPhone, t('form.invalidPhone')),
+            label: z.string().trim().max(60),
+          }),
+        )
         .min(1, t('form.required', { field: t('buyer.phone') }))
-        .refine(isValidBdPhone, t('form.invalidPhone')),
+        .max(8)
+        .superRefine((entries, context) => {
+          const seen = new Set<string>();
+          for (const [index, entry] of entries.entries()) {
+            const normalised = normalizeBdPhone(entry.number);
+            if (normalised && seen.has(normalised)) {
+              context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: [index, 'number'],
+                message: t('form.duplicatePhone'),
+              });
+            }
+            if (normalised) seen.add(normalised);
+          }
+        }),
       budgetMin: z.string().refine(numericOrBlank, t('form.mustBeNumber')),
       budgetMax: z.string().refine(numericOrBlank, t('form.mustBeNumber')),
       preferredTypes: z.array(z.enum(PROPERTY_TYPES)),
@@ -68,7 +92,7 @@ type BuyerFormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 const EMPTY: BuyerFormValues = {
   name: '',
-  phone: '',
+  phones: [{ number: '', label: '' }],
   budgetMin: '',
   budgetMax: '',
   preferredTypes: [],
@@ -99,7 +123,7 @@ export function BuyerFormSheet({
     if (!buyer) return EMPTY;
     return {
       name: buyer.name,
-      phone: buyer.phoneDisplay,
+      phones: buyer.phones.map((phone) => ({ number: phone.display, label: phone.label ?? '' })),
       budgetMin: buyer.budgetMin ?? '',
       budgetMax: buyer.budgetMax ?? '',
       preferredTypes: buyer.preferredTypes,
@@ -142,7 +166,12 @@ export function BuyerFormSheet({
 
     const payload: Record<string, unknown> = {
       name: values.name,
-      phone: values.phone,
+      phones: values.phones
+        .filter((phone) => phone.number.trim())
+        .map((phone) => ({
+          number: phone.number.trim(),
+          ...(phone.label.trim() && { label: phone.label.trim() }),
+        })),
       preferredTypes: values.preferredTypes,
       preferredAreas: values.preferredAreas
         .split(',')
@@ -222,21 +251,7 @@ export function BuyerFormSheet({
           {...(errors.name?.message ? { error: errors.name.message } : {})}
         />
 
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field, fieldState }) => (
-            <PhoneInput
-              label={t('buyer.phone')}
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              ref={field.ref}
-              {...(fieldState.error?.message ? { error: fieldState.error.message } : {})}
-            />
-          )}
-        />
+        <PhoneListField control={control} name="phones" label={t('buyer.phone')} />
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Controller

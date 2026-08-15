@@ -90,7 +90,7 @@ export function GlobalSearch() {
       key: `buyer:${buyer.id}`,
       to: `/buyers/${buyer.id}`,
       label: buyer.name,
-      detail: buyer.phoneDisplay,
+      detail: buyer.phones[0]?.display ?? '',
       kind: 'buyer',
     }));
 

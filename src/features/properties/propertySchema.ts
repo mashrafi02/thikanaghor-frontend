@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { AREA_UNITS, PROPERTY_TYPES, SOURCE_PLATFORMS } from '@/app/api/types';
 import { normalizeNumericInput } from '@/lib/format';
-import { isValidBdPhone } from '@/lib/phone';
+import { isValidBdPhone, normalizeBdPhone } from '@/lib/phone';
 
 /**
  * Client-side validation for the property form.
@@ -73,11 +73,40 @@ export function buildPropertySchema(t: Translate) {
       .trim()
       .min(1, required(t('property.contactName')))
       .max(120),
-    contactPhone: z
-      .string()
-      .trim()
+    /**
+     * At least one number, each valid. Mirrors the server's `phoneList`, including the
+     * duplicate check — the same number entered twice renders two identical call buttons,
+     * and catching it here saves a round trip to be told so.
+     */
+    phones: z
+      .array(
+        z.object({
+          number: z
+            .string()
+            .trim()
+            .min(1, required(t('property.contactPhone')))
+            .refine(isValidBdPhone, t('form.invalidPhone')),
+          label: z.string().trim().max(60),
+        }),
+      )
       .min(1, required(t('property.contactPhone')))
-      .refine(isValidBdPhone, t('form.invalidPhone')),
+      .max(8)
+      .superRefine((entries, context) => {
+        const seen = new Set<string>();
+        for (const [index, entry] of entries.entries()) {
+          // Compared after normalisation, so `01712-345678` and `+8801712345678` are
+          // recognised as the same number.
+          const normalised = normalizeBdPhone(entry.number);
+          if (normalised && seen.has(normalised)) {
+            context.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [index, 'number'],
+              message: t('form.duplicatePhone'),
+            });
+          }
+          if (normalised) seen.add(normalised);
+        }
+      }),
 
     type: z.enum(PROPERTY_TYPES),
 
@@ -136,7 +165,7 @@ export type PropertyFormValues = z.infer<ReturnType<typeof buildPropertySchema>>
 export const EMPTY_FORM: PropertyFormValues = {
   title: '',
   contactName: '',
-  contactPhone: '',
+  phones: [{ number: '', label: '' }],
   type: 'LAND',
   askingPrice: '',
   commissionRate: '',
@@ -163,7 +192,12 @@ export function toApiPayload(values: PropertyFormValues): Record<string, unknown
   const payload: Record<string, unknown> = {
     title: values.title,
     contactName: values.contactName,
-    contactPhone: values.contactPhone,
+    phones: values.phones
+      .filter((phone) => phone.number.trim())
+      .map((phone) => ({
+        number: phone.number.trim(),
+        ...(phone.label.trim() && { label: phone.label.trim() }),
+      })),
     type: values.type,
     areaUnit: values.areaUnit,
     sourcePlatform: values.sourcePlatform,

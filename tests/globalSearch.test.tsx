@@ -49,7 +49,11 @@ const property = {
   district: 'Dhaka',
   status: 'NEW',
 };
-const buyer = { id: 'b1', name: 'Sultana Razia', phoneDisplay: '01599-001122' };
+const buyer = {
+  id: 'b1',
+  name: 'Sultana Razia',
+  phones: [{ id: 'bp1', display: '01599-001122' }],
+};
 
 function mockResults(
   {

@@ -57,6 +57,11 @@ export function PropertyDetail() {
 
   const [closeDialogOpen, setCloseDialogOpen] = useState(false);
 
+  /** sortOrder 0 — what the mobile action bar dials. Optional-chained rather than
+   *  indexed blindly: the API guarantees at least one, but a cached response from before
+   *  this field existed would not. */
+  const primaryPhone = property?.phones[0];
+
   useEffect(() => {
     if (property) document.title = `${property.title} · ${t('appName')}`;
   }, [property, t]);
@@ -211,24 +216,32 @@ export function PropertyDetail() {
       </div>
 
       {/* Mobile action bar. Call and WhatsApp are the two things done standing in front
-          of a plot, so they are always reachable rather than scrolled to. */}
-      <div className="fixed inset-x-0 bottom-14 z-20 flex gap-2 border-t border-border bg-surface p-3 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden">
-        <a href={property.contactPhoneTel} className="flex-1">
-          <Button variant="primary" icon={Phone} fullWidth>
-            {t('property.call')}
-          </Button>
-        </a>
-        <a
-          href={property.contactPhoneWhatsApp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1"
-        >
-          <Button variant="secondary" icon={WhatsappLogo} fullWidth>
-            {t('property.whatsapp')}
-          </Button>
-        </a>
-      </div>
+          of a plot, so they are always reachable rather than scrolled to.
+
+          Uses the primary number — the full list is a scroll away in the contact panel,
+          and a bar with six buttons is not a bar. WhatsApp is dropped entirely when the
+          primary is a landline rather than rendered dead. */}
+      {primaryPhone && (
+        <div className="fixed inset-x-0 bottom-14 z-20 flex gap-2 border-t border-border bg-surface p-3 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden">
+          <a href={primaryPhone.tel} className="flex-1">
+            <Button variant="primary" icon={Phone} fullWidth>
+              {t('property.call')}
+            </Button>
+          </a>
+          {primaryPhone.whatsapp && (
+            <a
+              href={primaryPhone.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1"
+            >
+              <Button variant="secondary" icon={WhatsappLogo} fullWidth>
+                {t('property.whatsapp')}
+              </Button>
+            </a>
+          )}
+        </div>
+      )}
 
       <CloseDealDialog
         property={property}
@@ -379,26 +392,50 @@ function ContactPanel({ property }: { property: PropertyDetailType }) {
     <section className="flex flex-col gap-3 rounded-md border border-border bg-surface p-4">
       <h2 className="text-h3 text-ink">{t('property.contact')}</h2>
       <p className="text-body text-ink">{property.contactName}</p>
-      <p className="tabular text-body-sm text-ink-secondary">{property.contactPhoneDisplay}</p>
 
-      {/* Hidden on mobile: the pinned bottom bar already carries these. */}
-      <div className="hidden gap-2 md:flex">
-        <a href={property.contactPhoneTel} className="flex-1">
-          <Button variant="secondary" icon={Phone} fullWidth size="sm">
-            {t('property.call')}
-          </Button>
-        </a>
-        <a
-          href={property.contactPhoneWhatsApp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1"
-        >
-          <Button variant="secondary" icon={WhatsappLogo} fullWidth size="sm">
-            {t('property.whatsapp')}
-          </Button>
-        </a>
-      </div>
+      {/* Every number, not just the first. A listing routinely carries the owner's mobile
+          and a caretaker's, or an office landline — the previous single-number panel is
+          what made the second one useless even when it was stored. */}
+      <ul className="flex flex-col gap-3">
+        {property.phones.map((phone) => (
+          <li key={phone.id} className="flex flex-col gap-2">
+            <div className="flex items-baseline gap-2">
+              <span className="tabular text-body-sm text-ink-secondary">{phone.display}</span>
+              {phone.label && (
+                <span className="truncate text-caption text-ink-muted">{phone.label}</span>
+              )}
+              {phone.kind === 'LANDLINE' && (
+                <span className="text-caption text-ink-muted">
+                  {t('property.landline')}
+                </span>
+              )}
+            </div>
+
+            {/* Hidden on mobile: the pinned bottom bar already carries these. */}
+            <div className="hidden gap-2 md:flex">
+              <a href={phone.tel} className="flex-1">
+                <Button variant="secondary" icon={Phone} fullWidth size="sm">
+                  {t('property.call')}
+                </Button>
+              </a>
+              {/* Null on a landline. Rendering the button anyway would open WhatsApp to
+                  a chat that cannot exist. */}
+              {phone.whatsapp && (
+                <a
+                  href={phone.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                >
+                  <Button variant="secondary" icon={WhatsappLogo} fullWidth size="sm">
+                    {t('property.whatsapp')}
+                  </Button>
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

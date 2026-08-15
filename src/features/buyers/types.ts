@@ -6,7 +6,7 @@ import type {
   PropertyStatus,
   PropertyType,
 } from '@/app/api/types';
-import type { Property } from '@/features/properties/types';
+import type { ContactPhone, Property } from '@/features/properties/types';
 
 /** Transcribed from `backend/src/services/buyer.serializer.ts`. */
 
@@ -29,12 +29,8 @@ export interface BuyerInquiry {
 export interface Buyer {
   id: string;
   name: string;
-  phone: string;
-  phoneDisplay: string;
-  phoneTel: string;
-  phoneWhatsApp: string;
-  altPhone: string | null;
-  altPhoneDisplay: string | null;
+  /** Ordered; index 0 is the primary number. Never empty — the API requires one. */
+  phones: ContactPhone[];
   budgetMin: Money | null;
   budgetMax: Money | null;
   preferredTypes: PropertyType[];

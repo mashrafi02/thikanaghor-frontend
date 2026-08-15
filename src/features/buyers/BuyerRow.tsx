@@ -48,7 +48,7 @@ export const BuyerRow = memo(function BuyerRow({ buyer }: { buyer: Buyer }) {
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-body-sm">
           {budget && <span className="tabular font-medium text-ink">{budget}</span>}
-          <span className="tabular text-ink-muted">{buyer.phoneDisplay}</span>
+          <span className="tabular text-ink-muted">{buyer.phones[0]?.display ?? ''}</span>
           {buyer.inquiryCount > 0 && (
             <span className="text-ink-muted">
               {t('buyer.linkedCount', {

@@ -117,6 +117,9 @@ export function BuyerDetail() {
 
   if (!buyer) return null;
 
+  /** sortOrder 0 — what the call buttons act on. */
+  const primaryPhone = buyer.phones[0];
+
   const budget =
     buyer.budgetMin && buyer.budgetMax
       ? `${format.money(buyer.budgetMin)} – ${format.money(buyer.budgetMax)}`
@@ -141,23 +144,36 @@ export function BuyerDetail() {
           <h1 className="text-h1 text-ink">{buyer.name}</h1>
           <div className="flex flex-wrap items-center gap-3">
             <BuyerStatusPill status={buyer.status} />
-            <span className="tabular text-body-sm text-ink-secondary">
-              {buyer.phoneDisplay}
-            </span>
+            {/* Every number, comma-free — each is its own chip so a long list stays
+                scannable. The header shows them all; the call buttons act on the
+                primary, which is the one anybody dials by default. */}
+            {buyer.phones.map((phone) => (
+              <span key={phone.id} className="tabular text-body-sm text-ink-secondary">
+                {phone.display}
+                {phone.label && (
+                  <span className="ms-1 text-caption text-ink-muted">{phone.label}</span>
+                )}
+              </span>
+            ))}
           </div>
         </div>
 
         <div className="flex shrink-0 gap-2">
-          <a href={buyer.phoneTel}>
-            <Button variant="secondary" size="sm" icon={Phone}>
-              <span className="hidden sm:inline">{t('property.call')}</span>
-            </Button>
-          </a>
-          <a href={buyer.phoneWhatsApp} target="_blank" rel="noopener noreferrer">
-            <Button variant="secondary" size="sm" icon={WhatsappLogo}>
-              <span className="hidden sm:inline">{t('property.whatsapp')}</span>
-            </Button>
-          </a>
+          {primaryPhone && (
+            <a href={primaryPhone.tel}>
+              <Button variant="secondary" size="sm" icon={Phone}>
+                <span className="hidden sm:inline">{t('property.call')}</span>
+              </Button>
+            </a>
+          )}
+          {/* Null on a landline — the button is dropped rather than rendered dead. */}
+          {primaryPhone?.whatsapp && (
+            <a href={primaryPhone.whatsapp} target="_blank" rel="noopener noreferrer">
+              <Button variant="secondary" size="sm" icon={WhatsappLogo}>
+                <span className="hidden sm:inline">{t('property.whatsapp')}</span>
+              </Button>
+            </a>
+          )}
           <Button
             variant="secondary"
             size="sm"

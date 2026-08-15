@@ -38,19 +38,33 @@ export interface PropertyVideo {
   thumbnailUrl: string | null;
 }
 
+/**
+ * One contact number.
+ *
+ * `display`, `tel` and `whatsapp` are precomputed by the server so the client never
+ * reimplements Bangladeshi phone formatting. `whatsapp` is null on a landline — render
+ * the button only when it is present, because a wa.me link for a landline opens a chat
+ * that cannot exist.
+ */
+export interface ContactPhone {
+  id: string;
+  number: string;
+  kind: 'MOBILE' | 'LANDLINE';
+  label: string | null;
+  sortOrder: number;
+  display: string;
+  tel: string;
+  whatsapp: string | null;
+}
+
 /** Shared by list rows and the detail page. */
 export interface Property {
   id: string;
 
   title: string;
   contactName: string;
-  contactPhone: string;
-  /** Precomputed by the server so the client does not reimplement BD phone formatting. */
-  contactPhoneDisplay: string;
-  contactPhoneTel: string;
-  contactPhoneWhatsApp: string;
-  altPhone: string | null;
-  altPhoneDisplay: string | null;
+  /** Ordered; index 0 is the primary number. Never empty — the API requires one. */
+  phones: ContactPhone[];
 
   type: PropertyType;
   status: PropertyStatus;

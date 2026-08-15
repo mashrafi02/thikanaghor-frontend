@@ -143,7 +143,11 @@
     "sourceUrl": "Original listing link",
     "phoneNormalised": "Will be saved as {{phone}}",
     "sidePanel": "Summary and actions",
-    "tapToPlay": "Tap to play"
+    "tapToPlay": "Tap to play",
+    "phoneLabel": "Whose number",
+    "phoneLabelHint": "Owner, caretaker…",
+    "addPhone": "Add another number",
+    "landline": "Landline"
   },
   "form": {
     "required": "{{field}} is required",
@@ -158,7 +162,8 @@
     "discardBody": "What you have typed will be lost.",
     "keepEditing": "Keep editing",
     "discard": "Discard",
-    "budgetOrder": "Maximum budget cannot be lower than the minimum"
+    "budgetOrder": "Maximum budget cannot be lower than the minimum",
+    "duplicatePhone": "This number is already listed"
   },
   "buyer": {
     "title": "Buyers",
