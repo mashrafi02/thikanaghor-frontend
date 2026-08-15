@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://REPLACE_WITH_YOUR_RENDER_URL.onrender.com/api/:path*"
+      "destination": "https://thikanaghor-backend.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
