@@ -25,6 +25,11 @@
     "details": "Details",
     "dismiss": "Dismiss"
   },
+  "search": {
+    "placeholder": "Search properties and buyers",
+    "hint": "Type at least 2 characters",
+    "viewAll": "See all matching properties"
+  },
   "theme": {
     "label": "Theme",
     "light": "Light",

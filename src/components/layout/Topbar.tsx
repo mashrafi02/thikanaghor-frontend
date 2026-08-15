@@ -4,8 +4,9 @@ import { Icon } from '@/components/ui/Icon';
 import { useTheme } from '@/hooks/useTheme';
 import { setLanguage, type Language } from '@/i18n';
 import { cn } from '@/lib/cn';
-import { House, MagnifyingGlass, Moon, SignOut, Sun, Translate } from '@/lib/icons';
+import { House, Moon, SignOut, Sun, Translate } from '@/lib/icons';
 import { useGetMeQuery, useLogoutMutation } from '@/features/auth/authApi';
+import { GlobalSearch } from './GlobalSearch';
 
 /**
  * Sticky topbar: identity on mobile, then search, language, theme and sign-out.
@@ -29,14 +30,7 @@ export const Topbar = memo(function Topbar() {
           <span className="text-h3 text-ink">{t('common:appName')}</span>
         </div>
 
-        {/* Placeholder until F4 wires global search. Kept in the layout now so the
-            topbar's proportions are settled before content lands in it. */}
-        <div className="ms-auto hidden min-w-0 flex-1 items-center md:flex md:max-w-[420px]">
-          <div className="flex h-9 w-full items-center gap-2 rounded-sm border border-border bg-surface-sunken px-3 text-ink-muted">
-            <Icon icon={MagnifyingGlass} size="sm" />
-            <span className="truncate text-body-sm">{t('common:action.search')}</span>
-          </div>
-        </div>
+        <GlobalSearch />
 
         <div className="ms-auto flex items-center gap-1 md:ms-0">
           <button
